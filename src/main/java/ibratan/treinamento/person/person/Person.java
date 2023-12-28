@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 
 @Data
 public class Person implements Serializable {
+
     @Schema(description = "Id de cadastro", readOnly = true)
     private Long id;
 
@@ -35,4 +36,5 @@ public class Person implements Serializable {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @Schema( description = "Ultima atualização", example = "2022-12-12T12:15:50", readOnly = true)
     private LocalDateTime lastUpdated;
+
 }

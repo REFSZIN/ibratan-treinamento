@@ -1,40 +1,43 @@
-package ibratan.treinamento.person;
+package ibratan.treinamento.team;
 
 import ibratan.treinamento.person.person.Person;
+import ibratan.treinamento.person.team.Team;
 import io.quarkus.test.junit.QuarkusTest;
+import jakarta.validation.constraints.Past;
 import jakarta.ws.rs.core.MediaType;
 import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
 
 @QuarkusTest
-class PersonResourceTest {
+class TeamResourceTest {
 
     @Test
-    void ensureCreatePersonValid() {
-        var input = getPerson();
+    void ensureCreateTeamValid() {
+        var input = getTeam();
         given()
-                .header(HttpHeaders.CONTENT_TYPE , MediaType.APPLICATION_JSON )
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
                 .body(input)
-                .when().post("/api/person")
+                .when().post("/api/team")
                 .then()
                 .statusCode(201);
     }
 
     @Test
-    void ensureCreatePersonInvalid() {
-        var input = getPerson();
+    void ensureCreateTeamInvalid() {
+        var input = getTeam();
         input.setEmail(null);
         given()
-                .header(HttpHeaders.CONTENT_TYPE , MediaType.APPLICATION_JSON )
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
                 .body(input)
-                .when().post("/api/person")
+                .when().post("/api/team")
                 .then()
                 .statusCode(400);
     }
@@ -42,63 +45,74 @@ class PersonResourceTest {
     @Test
     void ensureCreateInvalidResponseServer() {
         given()
-                .header(HttpHeaders.CONTENT_TYPE , MediaType.APPLICATION_JSON )
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
                 .body("input")
-                .when().post("/api/person")
+                .when().post("/api/team")
                 .then()
                 .statusCode(500)
                 .body(is("Hello from RESTEasy Reactive"));
     }
 
     @Test
-    void ensureListPeople() {
+    void ensureListTeams() {
         given()
                 .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
-                .when().get("/api/person/list")
+                .when().get("/api/team/list")
                 .then()
                 .statusCode(200);
     }
 
     @Test
-    void ensureFindPersonById() {
+    void ensureFindTeamById() {
         given()
                 .pathParam("id", 1)
                 .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
-                .when().get("/api/person/{id}")
+                .when().get("/api/team/{id}")
                 .then()
                 .statusCode(200);
     }
 
     @Test
-    void ensureEditPerson() {
-        var input = getPerson();
+    void ensureEditTeam() {
+        var input = getTeam();
         given()
                 .pathParam("id", 1)
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
                 .body(input)
-                .when().put("/api/person/{id}")
+                .when().put("/api/team/{id}")
                 .then()
                 .statusCode(200);
     }
 
     @Test
-    void ensureDeletePerson() {
+    void ensureDeleteTeam() {
         given()
                 .pathParam("id", 1)
                 .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
-                .when().delete("/api/person/{id}")
+                .when().delete("/api/team/{id}")
                 .then()
                 .statusCode(204);
     }
 
-    private Person getPerson() {
+    private @Past List<Person> getPerson() {
         var input = new Person();
         input.setAge(18);
         input.setName("João da Silva");
         input.setEmail("joaozinho@gmail.com");
         input.setBirthDate(LocalDate.of(1990, 1, 1));
+        input.setId(input.getId());
+        return (List<Person>) input;
+    }
+
+    private Team getTeam() {
+        var input = new Team();
+        input.setLeader_id(1);
+        input.setName("BIANCA");
+        input.setEmail("capacita@live.com");
+        input.setLastUpdated(LocalDate.now().atStartOfDay());
+        input.setParticipants(getPerson());
         return input;
     }
 }
