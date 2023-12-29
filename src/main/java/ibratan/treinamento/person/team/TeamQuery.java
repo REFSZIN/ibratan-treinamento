@@ -13,35 +13,35 @@ import java.util.List;
 public interface TeamQuery {
 
     @GetGeneratedKeys
-    @SqlUpdate("INSERT INTO Team (name, email, leader_id, participants, lastUpdated) " +
-            "VALUES (:name, :email, :leader, :participants, :now)")
+    @SqlUpdate("INSERT INTO Team (name, email, leader_id, lastUpdated) " +
+            "VALUES (:name, :email, :leader, :now)")
     long create(@BindBean Team team, @Bind("now") LocalDateTime now);
 
     @SqlUpdate("UPDATE Team SET name = :name, email = :email, leader_id = :leader, " +
-            "participants = :participants, lastUpdated = :now WHERE id = :id")
+            "lastUpdated = :now WHERE id = :id")
     void update(@BindBean Team team, @Bind("now") LocalDateTime now, @Bind("id") Long id);
 
-    @SqlUpdate("DELETE FROM Team WHERE id = :id AND participants IS NULL")
-    void delete(@BindBean Team team, @Bind("now") LocalDateTime now, @Bind("id") Long id);
+    @SqlUpdate("DELETE FROM Team WHERE id = :id")
+    void delete(@BindBean Team team, LocalDateTime now, @Bind("id") Long id);
 
-    @SqlUpdate("UPDATE Team SET participants = array_append(participants, :personId) WHERE id = :teamId")
+    @SqlUpdate("INSERT INTO TeamParticipants (team_id, participant_id) VALUES (:teamId, :personId)")
     void addParticipant(@Bind("teamId") Long teamId, @Bind("personId") Long personId);
 
-    @SqlUpdate("UPDATE Team SET participants = array_remove(participants, :personId) WHERE id = :teamId")
+    @SqlUpdate("DELETE FROM TeamParticipants WHERE team_id = :teamId AND participant_id = :personId")
     void removeParticipant(@Bind("teamId") Long teamId, @Bind("personId") Long personId);
 
     @SqlQuery("SELECT * FROM Team WHERE id = :id")
     @RegisterBeanMapper(Team.class)
     Team findById(@Bind("id") Long id);
 
-    @SqlQuery("SELECT * FROM Team WHERE leader_id = :leaderId")
+    @SqlQuery("SELECT * FROM Team WHERE leader_id = :leader")
     @RegisterBeanMapper(Team.class)
-    List<Team> findByLeader(@Bind("leaderId") Long leaderId);
+    List<Team> findByLeader(@Bind("leaderId") Long leader);
 
-    @SqlQuery("SELECT EXISTS (SELECT 1 FROM Team WHERE id = :teamId AND :personId = ANY(participants))")
+    @SqlQuery("SELECT EXISTS (SELECT 1 FROM TeamParticipants WHERE team_id = :teamId AND participant_id = :personId)")
     boolean isPersonInTeam(@Bind("teamId") Long teamId, @Bind("personId") Long personId);
 
-    @SqlQuery("SELECT * FROM Team")
+    @SqlQuery("SELECT t.* FROM Team t JOIN TeamParticipants tp ON t.id = tp.team_id")
     @RegisterBeanMapper(Team.class)
     List<Team> list();
 

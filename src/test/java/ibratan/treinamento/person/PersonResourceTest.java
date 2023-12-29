@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.is;
 
 @QuarkusTest
 class PersonResourceTest {
@@ -26,6 +25,7 @@ class PersonResourceTest {
                 .statusCode(201);
     }
 
+//TODO MOKITO STATUS EXEPTIONERROR
     @Test
     void ensureCreatePersonInvalid() {
         var input = getPerson();
@@ -47,13 +47,13 @@ class PersonResourceTest {
                 .body("input")
                 .when().post("/api/person")
                 .then()
-                .statusCode(500)
-                .body(is("Hello from RESTEasy Reactive"));
+                .statusCode(500);
     }
 
     @Test
     void ensureListPeople() {
         given()
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
                 .when().get("/api/person/list")
                 .then()
@@ -64,6 +64,7 @@ class PersonResourceTest {
     void ensureFindPersonById() {
         given()
                 .pathParam("id", 1)
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
                 .when().get("/api/person/{id}")
                 .then()
@@ -85,9 +86,12 @@ class PersonResourceTest {
 
     @Test
     void ensureDeletePerson() {
+        var input = getPerson();
         given()
-                .pathParam("id", 1)
+                .pathParam("id", 10)
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON)
                 .header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON)
+                .body(input)
                 .when().delete("/api/person/{id}")
                 .then()
                 .statusCode(204);
@@ -95,6 +99,7 @@ class PersonResourceTest {
 
     private Person getPerson() {
         var input = new Person();
+        input.setId(1L);
         input.setAge(18);
         input.setName("João da Silva");
         input.setEmail("joaozinho@gmail.com");

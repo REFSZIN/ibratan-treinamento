@@ -76,9 +76,6 @@ public class TeamResource {
     @APIResponse(responseCode = "400", description = "Informações inválidas enviadas")
     @APIResponse(responseCode = "500", description = "Erro de processamento")
     public Response create(Team team) {
-        String errorMessage = getValidationError(team);
-        if (errorMessage != null)
-            return Response.status(Response.Status.BAD_REQUEST).entity(errorMessage).build();
         teamQuery.create(team, LocalDateTime.now());
         return Response.status(Response.Status.CREATED).build();
     }

@@ -13,12 +13,13 @@ public class Person implements Serializable {
     @Schema(description = "Id de cadastro", readOnly = true)
     private Long id;
 
-    @Schema(description = "Nome da pessoa", readOnly = true)
+    @Schema(description = "Nome da pessoa",  example = "João Pedro", required = true)
     @NotNull( message = "O nome não pode ser nulo")
     @Size(min = 5, max = 128, message = "Nome precisa ter no minimo 5 caracteres e no maximo 128" )
     private String name;
 
     @Schema( description = "Email da pessoa", example = "ibratan@ibratan.com.br", required = true)
+    @NotNull( message = "O e-mail não pode ser nulo")
     @Email(message = "O e-mail precisa ser valido")
     private String email;
 
@@ -33,8 +34,8 @@ public class Person implements Serializable {
     private LocalDate birthDate;
 
     @FutureOrPresent
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @Schema( description = "Ultima atualização", example = "2022-12-12T12:15:50", readOnly = true)
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    @Schema( description = "Ultima atualização", example = "2022-12-12 12:15:50", readOnly = true)
     private LocalDateTime lastUpdated;
 
 }
