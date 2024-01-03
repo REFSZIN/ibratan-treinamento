@@ -1,13 +1,10 @@
 package ibratan.treinamento.person.team;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
-import ibratan.treinamento.person.person.Person;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Data
 public class Team implements Serializable {
@@ -24,7 +21,7 @@ public class Team implements Serializable {
     @Email(message = "O e-mail do time precisa ser valido")
     private String email;
 
-    @Schema( description = "Id da pessoa leader do time", example = "1", required = false)
+    @Schema( description = "Id da pessoa leader do time", example = "1", required = true)
     private Integer leader;
 
     @FutureOrPresent

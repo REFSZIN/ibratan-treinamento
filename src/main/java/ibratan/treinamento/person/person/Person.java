@@ -20,7 +20,7 @@ public class Person implements Serializable {
 
     @Schema( description = "Email da pessoa", example = "ibratan@ibratan.com.br", required = true)
     @NotNull( message = "O e-mail não pode ser nulo")
-    @Email(message = "O e-mail precisa ser valido")
+    @Email(message = "Formato de e-mail inválido")
     private String email;
 
     @Schema( description = "Idade da pessoa", example = "18", required = false)
